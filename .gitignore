@@ -1,0 +1,5 @@
+__pycache__/
+.ruff_cache/
+fastqueue_cli.egg-info
+
+.venv
