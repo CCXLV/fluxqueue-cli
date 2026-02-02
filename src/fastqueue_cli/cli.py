@@ -1,4 +1,3 @@
-import logging
 import re
 from typing import Annotated
 
@@ -10,8 +9,6 @@ app = typer.Typer()
 worker_app = typer.Typer()
 
 app.add_typer(worker_app, name="worker")
-
-logger = logging.getLogger(__name__)
 
 
 @worker_app.command(name="install")
