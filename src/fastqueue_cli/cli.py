@@ -34,6 +34,9 @@ def worker_install(
                 "Invalid version. Please use versions like: 0.1.0, 0.2.3"
             )
 
+    # TODO: Check if its already installed or not,
+    # if it is just print it and add `update` command to update the version
+    # NOTE: --version argument should force it
     download_and_install(version)
 
 
