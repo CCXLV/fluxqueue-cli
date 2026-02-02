@@ -84,7 +84,7 @@ def download_and_install(version: str | None = None):
     try:
         r = requests.get(asset_api_url, headers=headers, stream=True)
     except:
-        remove_installed_files(target_name)
+        delete_installed_files(target_name)
         raise
 
     with open(target_name, "wb") as f:
@@ -99,14 +99,14 @@ def download_and_install(version: str | None = None):
 
                 dest_path = os.path.join(INSTALL_DIR, BINARY_NAME)
                 shutil.copy2(BINARY_NAME, dest_path)
-                remove_installed_files(target_name)
+                delete_installed_files(target_name)
             except:
-                remove_installed_files(target_name)
+                delete_installed_files(target_name)
                 raise
 
     print(f"Successfully installed {BINARY_NAME} to {INSTALL_DIR}")
 
 
-def remove_installed_files(target_name: str):
+def delete_installed_files(target_name: str):
     os.remove(BINARY_NAME)
     os.remove(target_name)
