@@ -3,3 +3,5 @@ __pycache__/
 fastqueue_cli.egg-info
 
 .venv
+
+.env

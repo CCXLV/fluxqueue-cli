@@ -1,8 +1,10 @@
 [project]
 name = "fastqueue-cli"
 version = "0.0.1"
+dependencies = ["typer", "requests"]
 
-dependencies = ["typer"]
+[project.scripts]
+fastqueue = "fastqueue_cli.cli:app"
 
 [project.optional-dependencies]
 dev = ["black", "ruff"]
