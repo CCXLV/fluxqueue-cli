@@ -8,6 +8,13 @@ import tarfile
 import requests
 from dotenv import load_dotenv
 
+from fastqueue_cli.exceptions import (
+    AlreadyInstalledError,
+    BinaryNotFoundError,
+    InvalidVersionError,
+    ReleaseNotFoundError,
+)
+
 load_dotenv()
 
 REPO = "CCXLV/fastqueue"
@@ -37,14 +44,14 @@ def get_worker_release(version: str | None = None):
             worker_releases.append(r)
 
     if not worker_releases:
-        raise Exception("No worker releases found.")
+        raise ReleaseNotFoundError("No worker releases found.")
 
     if version:
         for r in worker_releases:
             if r["extracted_version"] == version:
                 return r
         available = [r["extracted_version"] for r in worker_releases]
-        raise Exception(
+        raise InvalidVersionError(
             f"Worker version {version} not found.\n"
             f"Available versions: {', '.join(available)}"
         )
@@ -52,6 +59,11 @@ def get_worker_release(version: str | None = None):
 
 
 def download_and_install(version: str | None = None):
+    if shutil.which("fastqueue-worker"):
+        raise AlreadyInstalledError(
+            "fastqueue-worker is already installed, use fastqueue update command if you want to update it."
+        )
+
     release = get_worker_release(version)
     version = release["tag_name"]
 
@@ -70,7 +82,7 @@ def download_and_install(version: str | None = None):
             break
 
     if not asset_api_url or not target_name:
-        raise Exception(
+        raise BinaryNotFoundError(
             f"No binary found for Python {py_version} on {system}."
         )
 
