@@ -14,6 +14,7 @@ from fastqueue_cli.exceptions import (
     InvalidVersionError,
     ReleaseNotFoundError,
 )
+from fastqueue_cli.utils.worker import get_worker_version
 
 load_dotenv()
 
@@ -60,6 +61,12 @@ def get_worker_release(version: str | None = None):
 
 def download_and_install(version: str | None = None):
     if shutil.which("fastqueue-worker"):
+        if version:
+            worker_version = get_worker_version()
+            if worker_version != version:
+                # TODO: Finish this
+                pass
+
         raise AlreadyInstalledError(
             "fastqueue-worker is already installed, use fastqueue update command if you want to update it."
         )
