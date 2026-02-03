@@ -10,6 +10,6 @@ def get_worker_version() -> str | None:
             capture_output=True,
             text=True,
         )
-        return result.stdout.strip()
+        return result.stdout.replace("fastqueue-worker", "").strip()
     except (FileNotFoundError, subprocess.CalledProcessError):
         return None

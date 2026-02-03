@@ -12,3 +12,7 @@ class AlreadyInstalledError(Exception):
 
 class BinaryNotFoundError(Exception):
     pass
+
+
+class NotInstalledError(Exception):
+    pass

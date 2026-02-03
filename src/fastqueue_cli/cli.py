@@ -4,7 +4,7 @@ from typing import Annotated
 import typer
 
 from fastqueue_cli.exceptions import InvalidVersionError
-from fastqueue_cli.worker import download_and_install
+from fastqueue_cli.worker import download_and_install, update_worker
 
 app = typer.Typer()
 worker_app = typer.Typer()
@@ -22,7 +22,7 @@ def worker_install(
     ] = None,
 ):
     """
-    Download and install [bold]FastQueue Worker[/bold].
+    Download and install [bold]fastqueue-worker[/bold].
     """
     if version:
         pattern = r"^\d+\.\d+\.\d+$"
@@ -46,11 +46,17 @@ def worker_update(
     no_backup: Annotated[
         bool,
         typer.Option(
-            help="Do not save the old version binary when updating. Default behavior saves it."
+            is_flag=True,
+            flag_value=False,
+            show_default=False,
+            help="Do not save the old version binary when updating. Default behavior saves it.",
         ),
     ] = False,
 ):
-    pass
+    """
+    Update [bold]fastqueue-worker[/bold].
+    """
+    update_worker(version=version, no_backup=no_backup)
 
 
 if __name__ == "__main__":
