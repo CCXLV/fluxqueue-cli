@@ -5,3 +5,5 @@ fastqueue_cli.egg-info
 .venv
 
 .env
+
+dist/

@@ -1,6 +1,15 @@
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
 [project]
 name = "fastqueue-cli"
-version = "0.0.1"
+dynamic = ["version"]
+description = "CLI for FastQueue"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = "Apache"
+license-files = ["LICENSE"]
 dependencies = ["typer", "requests"]
 
 [project.scripts]
@@ -9,6 +18,8 @@ fastqueue = "fastqueue_cli.cli:app"
 [project.optional-dependencies]
 dev = ["black", "ruff"]
 
+[tool.pdm]
+version = { source = "file", path = "src/fastqueue_cli/__init__.py" }
 
 [tool.black]
 line-length = 79
