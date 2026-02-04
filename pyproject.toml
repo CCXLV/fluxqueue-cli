@@ -3,9 +3,9 @@ requires = ["pdm-backend"]
 build-backend = "pdm.backend"
 
 [project]
-name = "fastqueue-cli"
+name = "fluxqueue-cli"
 dynamic = ["version"]
-description = "CLI for FastQueue"
+description = "CLI for fluxqueue"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = "Apache"
@@ -19,13 +19,13 @@ dependencies = [
 ]
 
 [project.scripts]
-fastqueue = "fastqueue_cli.cli:app"
+fluxqueue = "fluxqueue_cli.cli:app"
 
 [project.optional-dependencies]
 dev = ["black", "ruff", "pdm"]
 
 [tool.pdm]
-version = { source = "file", path = "src/fastqueue_cli/__init__.py" }
+version = { source = "file", path = "src/fluxqueue_cli/__init__.py" }
 
 [tool.black]
 line-length = 79
