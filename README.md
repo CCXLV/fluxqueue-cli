@@ -30,7 +30,7 @@ fluxqueue start --tasks-module-path src/tasks
 - **`--redis-url`, `-r`** (default: `redis://127.0.0.1:6379`): Connection string for the Redis instance backing FluxQueue.
 - **`--tasks-module-path`, `-t`**: Python module path where your task functions are defined (for example: `src.tasks`).
 - **`--queue`, `-q`** (default: `default`): Queue name the worker reads jobs from.
-- **`--save-dead-tasks`** (flag, default: `false`): When enabled, keep failed jobs that reached the retry limit so you can inspect them later.
+- **`--save-dead-tasks`** (flag, default: `false`): When enabled, keeps failed jobs that reached the retry limit so you can inspect them later.
 
 These options can also be set via environment variables:
 
