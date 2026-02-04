@@ -1,5 +1,6 @@
 __pycache__/
 .ruff_cache/
+.pdm-build/
 fastqueue_cli.egg-info
 
 .venv
