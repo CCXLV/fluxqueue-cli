@@ -10,13 +10,19 @@ readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = "Apache"
 license-files = ["LICENSE"]
-dependencies = ["typer", "requests"]
+authors = [
+    {name = "Giorgi Merebashvili", email = "mereba2627@gmail.com"}
+]
+dependencies = [
+    "typer>=0.17.0", 
+    "requests>=2.29.0"
+]
 
 [project.scripts]
 fastqueue = "fastqueue_cli.cli:app"
 
 [project.optional-dependencies]
-dev = ["black", "ruff"]
+dev = ["black", "ruff", "pdm"]
 
 [tool.pdm]
 version = { source = "file", path = "src/fastqueue_cli/__init__.py" }
