@@ -3,8 +3,8 @@ from typing import Annotated
 
 import typer
 
-from fastqueue_cli.exceptions import InvalidVersionError
-from fastqueue_cli.worker import (
+from fluxqueue_cli.exceptions import InvalidVersionError
+from fluxqueue_cli.worker import (
     download_and_install,
     start_worker,
     update_worker,
@@ -24,7 +24,7 @@ def start(
         typer.Option(
             "--concurrency",
             "-c",
-            envvar="FASTQUEUE_CONCURRENCY",
+            envvar="fluxqueue_CONCURRENCY",
             help="Number of tasks to run in parallel.",
         ),
     ] = 4,
@@ -33,7 +33,7 @@ def start(
         typer.Option(
             "--redis-url",
             "-r",
-            envvar="FASTQUEUE_REDIS_URL",
+            envvar="fluxqueue_REDIS_URL",
             help="Redis URL for the worker to connect to.",
         ),
     ] = "redis://127.0.0.1:6379",
@@ -42,7 +42,7 @@ def start(
         typer.Option(
             "--tasks-module-path",
             "-t",
-            envvar="FASTQUEUE_TASKS_MODULE_PATH",
+            envvar="fluxqueue_TASKS_MODULE_PATH",
             help="Module path where the task functions are exported or located.",
         ),
     ],
@@ -51,7 +51,7 @@ def start(
         typer.Option(
             "--queue",
             "-q",
-            envvar="FASTQUEUE_QUEUE",
+            envvar="fluxqueue_QUEUE",
             help="Name of the queue.",
         ),
     ] = "default",
@@ -64,7 +64,7 @@ def start(
     ] = False,
 ):
     """
-    Start a [bold]FastQueue[/bold] worker.
+    Start a [bold]fluxqueue[/bold] worker.
     """
     start_worker(
         concurrency=concurrency,
@@ -85,7 +85,7 @@ def worker_install(
     ] = None,
 ):
     """
-    Download and install [bold]fastqueue-worker[/bold].
+    Download and install [bold]fluxqueue-worker[/bold].
     """
     if version:
         pattern = r"^\d+\.\d+\.\d+$"
@@ -116,7 +116,7 @@ def worker_update(
     ] = False,
 ):
     """
-    Update [bold]fastqueue-worker[/bold].
+    Update [bold]fluxqueue-worker[/bold].
     """
     update_worker(version=version, no_backup=no_backup)
 

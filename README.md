@@ -1,3 +1,3 @@
-# FastQueue CLI
+# FluxQueue CLI
 
-CLI tool for installing and running [fastqueue](https://github.com/CCXLV/fastqueue) workers.
+CLI tool for installing and running [FluxQueue](https://github.com/CCXLV/fluxqueue) workers.

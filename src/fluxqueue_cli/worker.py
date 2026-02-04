@@ -11,7 +11,7 @@ from pathlib import Path
 import requests
 from dotenv import load_dotenv
 
-from fastqueue_cli.exceptions import (
+from fluxqueue_cli.exceptions import (
     AlreadyInstalledError,
     BinaryNotFoundError,
     InvalidVersionError,
@@ -21,8 +21,8 @@ from fastqueue_cli.exceptions import (
 
 load_dotenv()
 
-REPO = "CCXLV/fastqueue"
-BINARY_NAME = "fastqueue-worker"
+REPO = "CCXLV/fluxqueue"
+BINARY_NAME = "fluxqueue-worker"
 INSTALL_DIR = "/usr/local/bin" if platform.system() != "Windows" else "C:\\bin"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
@@ -50,7 +50,7 @@ def start_worker(
         arguments.append("--save-dead-tasks")
 
     subprocess.run(
-        ["fastqueue-worker", *arguments],
+        ["fluxqueue-worker", *arguments],
         stdin=sys.stdin,
         stdout=sys.stdout,
         stderr=sys.stderr,
@@ -60,12 +60,12 @@ def start_worker(
 def get_worker_version() -> str | None:
     try:
         result = subprocess.run(
-            ["fastqueue-worker", "--version"],
+            ["fluxqueue-worker", "--version"],
             check=True,
             capture_output=True,
             text=True,
         )
-        return result.stdout.replace("fastqueue-worker", "").strip()
+        return result.stdout.replace("fluxqueue-worker", "").strip()
     except (FileNotFoundError, subprocess.CalledProcessError):
         return None
 
@@ -153,7 +153,7 @@ def install_worker(
     dest_path = Path(INSTALL_DIR) / BINARY_NAME
     if dest_path.exists() and not overwrite:
         raise FileExistsError(
-            f"fastqueue-worker is already installed at {dest_path}"
+            f"fluxqueue-worker is already installed at {dest_path}"
         )
 
     # Linux
@@ -180,9 +180,9 @@ def install_worker(
 
 
 def download_and_install(version: str | None = None):
-    if shutil.which("fastqueue-worker"):
+    if shutil.which("fluxqueue-worker"):
         raise AlreadyInstalledError(
-            "fastqueue-worker is already installed, use `fastqueue worker update` command to update it."
+            "fluxqueue-worker is already installed, use `fluxqueue worker update` command to update it."
         )
 
     temp_path, target_name = download_worker_binary(version)
@@ -194,7 +194,7 @@ def update_worker(*, version: str | None = None, no_backup: bool = False):
 
     if not current_version:
         raise NotInstalledError(
-            "fastqueue-worker is not installed. Use `fastqueue worker install` to install it."
+            "fluxqueue-worker is not installed. Use `fluxqueue worker install` to install it."
         )
 
     print(f"Current Version: {current_version}")
