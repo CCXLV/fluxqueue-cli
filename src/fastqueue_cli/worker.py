@@ -2,6 +2,7 @@ import os
 import platform
 import re
 import shutil
+import subprocess
 import sys
 import tarfile
 import tempfile
@@ -17,7 +18,6 @@ from fastqueue_cli.exceptions import (
     NotInstalledError,
     ReleaseNotFoundError,
 )
-from fastqueue_cli.utils.worker import get_worker_version
 
 load_dotenv()
 
@@ -27,6 +27,47 @@ INSTALL_DIR = "/usr/local/bin" if platform.system() != "Windows" else "C:\\bin"
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # TODO: Refactor the headers since the token won't be needed when launched to public
+
+
+def start_worker(
+    *,
+    concurrency: int,
+    redis_url: str,
+    tasks_module_path: str,
+    queue: str,
+    save_dead_tasks=False,
+):
+    # fmt: off
+    arguments = [
+        "--concurrency", str(concurrency),
+        "--redis-url", redis_url,
+        "--tasks-module-path", tasks_module_path,
+        "--queue", queue,
+    ]
+    # fmt: on
+
+    if save_dead_tasks:
+        arguments.append("--save-dead-tasks")
+
+    subprocess.run(
+        ["fastqueue-worker", *arguments],
+        stdin=sys.stdin,
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )
+
+
+def get_worker_version() -> str | None:
+    try:
+        result = subprocess.run(
+            ["fastqueue-worker", "--version"],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return result.stdout.replace("fastqueue-worker", "").strip()
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return None
 
 
 def get_worker_release(version: str | None = None):
