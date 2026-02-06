@@ -26,7 +26,7 @@ fluxqueue start --tasks-module-path src.tasks
 
 ## Documentation
 
-For more information and documenation about the usage please visit [**FluxQueue Documentation**](https://fluxqueue.ccxlv.dev).
+For more information and documenation about the usage please visit [FluxQueue Documentation](https://fluxqueue.ccxlv.dev).
 
 ## License
 
