@@ -24,7 +24,7 @@ def start(
         typer.Option(
             "--concurrency",
             "-c",
-            envvar="fluxqueue_CONCURRENCY",
+            envvar="FLUXQUEUE_CONCURRENCY",
             help="Number of tasks to run in parallel.",
         ),
     ] = 4,
@@ -33,8 +33,8 @@ def start(
         typer.Option(
             "--redis-url",
             "-r",
-            envvar="fluxqueue_REDIS_URL",
-            help="Redis URL for the worker to connect to.",
+            envvar="FLUXQUEUE_REDIS_URL",
+            help="Redis connection URL for the worker.",
         ),
     ] = "redis://127.0.0.1:6379",
     tasks_module_path: Annotated[
@@ -42,8 +42,8 @@ def start(
         typer.Option(
             "--tasks-module-path",
             "-t",
-            envvar="fluxqueue_TASKS_MODULE_PATH",
-            help="Module path where the task functions are exported or located.",
+            envvar="FLUXQUEUE_TASKS_MODULE_PATH",
+            help="Python module path where task functions are defined (e.g. src.tasks).",
         ),
     ],
     queue: Annotated[
@@ -51,15 +51,15 @@ def start(
         typer.Option(
             "--queue",
             "-q",
-            envvar="fluxqueue_QUEUE",
-            help="Name of the queue.",
+            envvar="FLUXQUEUE_QUEUE",
+            help="Queue name the worker reads jobs from.",
         ),
     ] = "default",
     save_dead_tasks: Annotated[
         bool,
         typer.Option(
             is_flag=True,
-            help="Saves dead tasks in Redis that have used all their retries yet still failed. Can be useful for debugging.",
+            help="Keep failed tasks that reached the retry limit so you can inspect them later.",
         ),
     ] = False,
 ):
@@ -80,7 +80,7 @@ def worker_install(
     version: Annotated[
         str | None,
         typer.Option(
-            help="Specify a version to install. If not provided, installs the latest version."
+            help="Version to install. If omitted, installs the latest."
         ),
     ] = None,
 ):
@@ -103,7 +103,7 @@ def worker_update(
     version: Annotated[
         str | None,
         typer.Option(
-            help="Specify a version to update to. If not provided, updates to the latest version."
+            help="Version to update to. If omitted, updates to the latest."
         ),
     ] = None,
     no_backup: Annotated[
@@ -111,7 +111,7 @@ def worker_update(
         typer.Option(
             is_flag=True,
             flag_value=False,
-            help="Do not save the old version binary when updating. Default behavior saves it.",
+            help="Skip keeping a backup of the old binary when updating.",
         ),
     ] = False,
 ):

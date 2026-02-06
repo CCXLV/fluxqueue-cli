@@ -1,4 +1,4 @@
-name: Release
+name: Publish
 
 on:
   push:
@@ -6,8 +6,8 @@ on:
       - "v*"
 
 jobs:
-  pypi-publish:
-    name: upload release to PyPI
+  publish:
+    name: Publish to PyPI
     runs-on: ubuntu-latest
     permissions:
       # This permission is needed for private repositories.
@@ -15,9 +15,11 @@ jobs:
       # IMPORTANT: this permission is mandatory for trusted publishing
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - uses: pdm-project/setup-pdm@v4
+      - name: Setup PDM
+        uses: pdm-project/setup-pdm@v4
 
       - name: Publish package distributions to PyPI
         run: pdm publish
