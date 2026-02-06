@@ -9,7 +9,6 @@ import tempfile
 from pathlib import Path
 
 import requests
-from dotenv import load_dotenv
 
 from fluxqueue_cli.exceptions import (
     AlreadyInstalledError,
@@ -19,12 +18,9 @@ from fluxqueue_cli.exceptions import (
     ReleaseNotFoundError,
 )
 
-load_dotenv()
-
 REPO = "CCXLV/fluxqueue"
 BINARY_NAME = "fluxqueue-worker"
 INSTALL_DIR = "/usr/local/bin" if platform.system() != "Windows" else "C:\\bin"
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
 # TODO: Refactor the headers since the token won't be needed when launched to public
 
@@ -74,7 +70,6 @@ def get_worker_release(version: str | None = None):
     version_pattern = r"^worker-v(\d+\.\d+\.\d+)$"
 
     headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
         "Accept": "application/vnd.github.v3+json",
     }
     api_url = f"https://api.github.com/repos/{REPO}/releases"
@@ -129,7 +124,6 @@ def download_worker_binary(version: str | None = None):
     print(f"Downloading {target_name} via API...")
 
     headers = {
-        "Authorization": f"token {GITHUB_TOKEN}",
         "Accept": "application/octet-stream",
     }
 
