@@ -21,20 +21,13 @@ fluxqueue worker install
 To start a worker, provide the path to the module where your tasks are defined and exported:
 
 ```bash
-fluxqueue start --tasks-module-path src/tasks
+fluxqueue start --tasks-module-path src.tasks
 ```
 
-### Options
+## Documentation
 
-- **`--concurrency`, `-c`** (default: `4`): Number of tasks to run in parallel.
-- **`--redis-url`, `-r`** (default: `redis://127.0.0.1:6379`): Connection string for the Redis instance backing FluxQueue.
-- **`--tasks-module-path`, `-t`**: Python module path where your task functions are defined (for example: `src.tasks`).
-- **`--queue`, `-q`** (default: `default`): Queue name the worker reads jobs from.
-- **`--save-dead-tasks`** (flag, default: `false`): When enabled, keeps failed jobs that reached the retry limit so you can inspect them later.
+For more information and documenation about the usage please visit [**FluxQueue Documentation**](https://fluxqueue.ccxlv.dev).
 
-These options can also be set via environment variables:
+## License
 
-- **`FLUXQUEUE_CONCURRENCY`**: Default value for `--concurrency`.
-- **`FLUXQUEUE_REDIS_URL`**: Default value for `--redis-url`.
-- **`FLUXQUEUE_TASKS_MODULE_PATH`**: Default value for `--tasks-module-path`.
-- **`FLUXQUEUE_QUEUE`**: Default value for `--queue`.
+FluxQueue is licensed under the Apache-2.0 license. See [LICENSE](LICENSE) for details.
