@@ -5,7 +5,7 @@ build-backend = "pdm.backend"
 [project]
 name = "fluxqueue-cli"
 dynamic = ["version"]
-description = "CLI for fluxqueue"
+description = "A command-line tool for installing and running FluxQueue workers"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = "Apache"
