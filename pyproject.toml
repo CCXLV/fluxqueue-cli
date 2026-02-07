@@ -8,7 +8,8 @@ dynamic = ["version"]
 description = "A command-line tool for installing and running FluxQueue workers"
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
-license = { text = "Apache-2.0", file = "LICENSE" }
+license = "Apache-2.0"
+license-files = ["LICENSE"]
 authors = [
     {name = "Giorgi Merebashvili", email = "mereba2627@gmail.com"}
 ]
