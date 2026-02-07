@@ -1,6 +1,5 @@
 import os
 import platform
-import re
 import shutil
 import subprocess
 import sys
@@ -67,8 +66,6 @@ def get_worker_version() -> str | None:
 
 
 def get_worker_release(version: str | None = None):
-    version_pattern = r"^worker-v(\d+\.\d+\.\d+)$"
-
     headers = {
         "Accept": "application/vnd.github.v3+json",
     }
@@ -78,9 +75,10 @@ def get_worker_release(version: str | None = None):
 
     worker_releases = []
     for r in response.json():
-        match = re.match(version_pattern, r["tag_name"])
-        if match:
-            r["extracted_version"] = match.group(1)
+        tag = r["tag_name"]
+        if tag.startswith("worker-v"):
+            version_str = tag[len("worker-v") :]
+            r["extracted_version"] = version_str
             worker_releases.append(r)
 
     if not worker_releases:
