@@ -21,7 +21,7 @@ fluxqueue worker install
 To start a worker, provide the path to the module where your tasks are defined and exported:
 
 ```bash
-fluxqueue start --tasks-module-path src.tasks
+fluxqueue start --tasks-module-path src/tasks
 ```
 
 ## Documentation
