@@ -5,6 +5,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import zipfile
 from pathlib import Path
 
 import requests
@@ -20,8 +21,6 @@ from fluxqueue_cli.exceptions import (
 REPO = "CCXLV/fluxqueue"
 BINARY_NAME = "fluxqueue-worker"
 INSTALL_DIR = "/usr/local/bin" if platform.system() != "Windows" else "C:\\bin"
-
-# TODO: Refactor the headers since the token won't be needed when launched to public
 
 
 def start_worker(
@@ -161,7 +160,11 @@ def install_worker(
             except:
                 delete_installed_files(temp_file_path)
                 raise
-    # TODO: Implement Windows
+    # MacOS + Windows
+    elif actual_file_name.endswith(".zip"):
+        with zipfile.ZipFile(temp_file_path, 'r') as zip_file:
+            for file in zip_file.namelist():
+                zip_file.extract(file, dest_path)
     else:
         delete_installed_files(temp_file_path)
         raise NotImplementedError(
