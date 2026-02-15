@@ -160,7 +160,7 @@ def install_worker(
             except:
                 delete_installed_files(temp_file_path)
                 raise
-    # MacOS + Windows
+    # macOS + Windows
     elif actual_file_name.endswith(".zip"):
         with zipfile.ZipFile(temp_file_path, 'r') as zip_file:
             for file in zip_file.namelist():
