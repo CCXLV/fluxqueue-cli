@@ -22,17 +22,14 @@ dependencies = [
 fluxqueue = "fluxqueue_cli.cli:app"
 
 [project.optional-dependencies]
-dev = ["black", "ruff", "pdm"]
+dev = ["ruff", "pdm"]
 
 [tool.pdm]
 version = { source = "file", path = "src/fluxqueue_cli/__init__.py" }
 
-[tool.black]
-line-length = 79
-include = '\.pyi?$'
-preview = true
-
 [tool.ruff]
+line-length = 88
+
 [tool.ruff.lint]
 select = [
   "E",   # pycodestyle errors

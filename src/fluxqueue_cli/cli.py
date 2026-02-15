@@ -79,9 +79,7 @@ def start(
 def worker_install(
     version: Annotated[
         str | None,
-        typer.Option(
-            help="Version to install. If omitted, installs the latest."
-        ),
+        typer.Option(help="Version to install. If omitted, installs the latest."),
     ] = None,
 ):
     """
@@ -102,9 +100,7 @@ def worker_install(
 def worker_update(
     version: Annotated[
         str | None,
-        typer.Option(
-            help="Version to update to. If omitted, updates to the latest."
-        ),
+        typer.Option(help="Version to update to. If omitted, updates to the latest."),
     ] = None,
     no_backup: Annotated[
         bool,

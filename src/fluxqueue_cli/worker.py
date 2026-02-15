@@ -138,14 +138,10 @@ def download_worker_binary(version: str | None = None):
     return str(temp_path), target_name
 
 
-def install_worker(
-    *, actual_file_name: str, temp_file_path: str, overwrite=False
-):
+def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=False):
     dest_path = Path(INSTALL_DIR) / BINARY_NAME
     if dest_path.exists() and not overwrite:
-        raise FileExistsError(
-            f"fluxqueue-worker is already installed at {dest_path}"
-        )
+        raise FileExistsError(f"fluxqueue-worker is already installed at {dest_path}")
 
     # Linux
     if actual_file_name.endswith(".tar.gz"):
@@ -162,14 +158,12 @@ def install_worker(
                 raise
     # macOS + Windows
     elif actual_file_name.endswith(".zip"):
-        with zipfile.ZipFile(temp_file_path, 'r') as zip_file:
+        with zipfile.ZipFile(temp_file_path, "r") as zip_file:
             for file in zip_file.namelist():
                 zip_file.extract(file, dest_path)
     else:
         delete_installed_files(temp_file_path)
-        raise NotImplementedError(
-            "Only .tar.gz installation is implemented yet."
-        )
+        raise NotImplementedError("Only .tar.gz installation is implemented yet.")
 
     print(f"Successfully installed {BINARY_NAME} to {INSTALL_DIR}")
 
@@ -198,9 +192,7 @@ def update_worker(*, version: str | None = None, no_backup: bool = False):
 
     dest_path = os.path.join(INSTALL_DIR, BINARY_NAME)
     if not no_backup:
-        new_name = os.path.join(
-            INSTALL_DIR, f"{BINARY_NAME}-{current_version}.backup"
-        )
+        new_name = os.path.join(INSTALL_DIR, f"{BINARY_NAME}-{current_version}.backup")
         os.rename(dest_path, new_name)
 
     temp_path, target_name = download_worker_binary(version)
