@@ -20,7 +20,13 @@ from fluxqueue_cli.exceptions import (
 
 REPO = "CCXLV/fluxqueue"
 BINARY_NAME = "fluxqueue-worker"
-INSTALL_DIR = "/usr/local/bin" if platform.system() != "Windows" else "C:\\bin"
+if platform.system() == "Windows":
+    install_dir = os.path.join(
+        os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), "fluxqueue-cli", "bin"
+    )
+    INSTALL_DIR = install_dir
+else:
+    INSTALL_DIR = "/usr/local/bin"
 
 
 def start_worker(
@@ -158,9 +164,68 @@ def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=Fals
                 raise
     # macOS + Windows
     elif actual_file_name.endswith(".zip"):
-        with zipfile.ZipFile(temp_file_path, "r") as zip_file:
-            for file in zip_file.namelist():
-                zip_file.extract(file, dest_path)
+        with tempfile.TemporaryDirectory() as extract_temp_dir:
+            with zipfile.ZipFile(temp_file_path, "r") as zip_file:
+                zip_file.extractall(extract_temp_dir)
+
+            exe_name = (
+                f"{BINARY_NAME}.exe" if platform.system() == "Windows" else BINARY_NAME
+            )
+            found_binary = None
+
+            for root, _dirs, files in os.walk(extract_temp_dir):
+                if exe_name in files:
+                    found_binary = Path(root) / exe_name
+                    break
+
+            if not found_binary:
+                for root, _dirs, files in os.walk(extract_temp_dir):
+                    for file in files:
+                        if BINARY_NAME in file and (
+                            platform.system() != "Windows" or file.endswith(".exe")
+                        ):
+                            found_binary = Path(root) / file
+                            break
+                    if found_binary:
+                        break
+
+            if not found_binary:
+                try:
+                    os.remove(temp_file_path)
+                except PermissionError:
+                    raise PermissionError(
+                        f"Permission denied: Could not remove temporary file {temp_file_path}. "
+                        "Please remove it manually."
+                    ) from None
+                except OSError as e:
+                    if e.errno == 13:  # Permission denied (EACCES)
+                        raise PermissionError(
+                            f"Permission denied: Could not remove temporary file {temp_file_path}. "
+                            "Please remove it manually."
+                        ) from e
+                raise BinaryNotFoundError(
+                    f"Could not find {exe_name} in the downloaded archive."
+                )
+
+            dest_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(found_binary, dest_path)
+
+            if platform.system() != "Windows":
+                os.chmod(dest_path, 0o755)
+        try:
+            os.remove(temp_file_path)
+        except PermissionError:
+            raise PermissionError(
+                f"Permission denied: Could not remove temporary file {temp_file_path}. "
+                "Please remove it manually."
+            ) from None
+        except OSError as e:
+            if e.errno == 13:  # Permission denied (EACCES)
+                raise PermissionError(
+                    f"Permission denied: Could not remove temporary file {temp_file_path}. "
+                    "Please remove it manually."
+                ) from e
+            raise
     else:
         delete_installed_files(temp_file_path)
         raise NotImplementedError("Only .tar.gz installation is implemented yet.")
