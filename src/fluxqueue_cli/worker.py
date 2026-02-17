@@ -21,9 +21,8 @@ from fluxqueue_cli.exceptions import (
 REPO = "CCXLV/fluxqueue"
 BINARY_NAME = "fluxqueue-worker"
 if platform.system() == "Windows":
-    install_dir = os.path.join(
-        os.environ.get("LOCALAPPDATA", os.path.expanduser("~")), "fluxqueue-cli", "bin"
-    )
+    user_profile = os.environ.get("USERPROFILE", os.path.expanduser("~"))
+    install_dir = os.path.join(user_profile, ".fluxqueue", "bin")
     INSTALL_DIR = install_dir
 else:
     INSTALL_DIR = "/usr/local/bin"
@@ -145,7 +144,10 @@ def download_worker_binary(version: str | None = None):
 
 
 def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=False):
-    dest_path = Path(INSTALL_DIR) / BINARY_NAME
+    if platform.system() == "Windows":
+        dest_path = Path(INSTALL_DIR) / f"{BINARY_NAME}.exe"
+    else:
+        dest_path = Path(INSTALL_DIR) / BINARY_NAME
     if dest_path.exists() and not overwrite:
         raise FileExistsError(f"fluxqueue-worker is already installed at {dest_path}")
 
@@ -255,9 +257,17 @@ def update_worker(*, version: str | None = None, no_backup: bool = False):
     if version:
         print(f"Desired Version: {version}")
 
-    dest_path = os.path.join(INSTALL_DIR, BINARY_NAME)
+    if platform.system() == "Windows":
+        dest_path = os.path.join(INSTALL_DIR, f"{BINARY_NAME}.exe")
+        backup_suffix = ".exe.backup"
+    else:
+        dest_path = os.path.join(INSTALL_DIR, BINARY_NAME)
+        backup_suffix = ".backup"
+
     if not no_backup:
-        new_name = os.path.join(INSTALL_DIR, f"{BINARY_NAME}-{current_version}.backup")
+        new_name = os.path.join(
+            INSTALL_DIR, f"{BINARY_NAME}-{current_version}{backup_suffix}"
+        )
         os.rename(dest_path, new_name)
 
     temp_path, target_name = download_worker_binary(version)
