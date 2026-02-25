@@ -27,6 +27,7 @@ if platform.system() == "Windows":
 else:
     INSTALL_DIR = "/usr/local/bin"
 
+# TODO: Add startup wrapper support
 
 def start_worker(
     *,
