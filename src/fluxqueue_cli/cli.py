@@ -81,6 +81,10 @@ def worker_install(
         str | None,
         typer.Option(help="Version to install. If omitted, installs the latest."),
     ] = None,
+    path: Annotated[
+        str | None,
+        typer.Option(help="Custom destination path."),
+    ] = None,
 ):
     """
     Download and install [bold]fluxqueue-worker[/bold].
@@ -93,7 +97,7 @@ def worker_install(
                 "Invalid version. Please use versions like: 0.1.0, 0.2.3"
             )
 
-    download_and_install(version)
+    download_and_install(version, path)
 
 
 @worker_app.command(name="update")

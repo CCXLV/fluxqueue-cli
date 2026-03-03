@@ -22,7 +22,7 @@ dependencies = [
 fluxqueue = "fluxqueue_cli.cli:app"
 
 [project.optional-dependencies]
-dev = ["ruff", "pdm"]
+dev = ["ruff"]
 
 [tool.pdm]
 version = { source = "file", path = "src/fluxqueue_cli/__init__.py" }
