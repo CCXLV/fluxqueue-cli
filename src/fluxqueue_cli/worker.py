@@ -29,6 +29,7 @@ else:
 
 # TODO: Add startup wrapper support
 
+
 def start_worker(
     *,
     concurrency: int,
@@ -236,7 +237,7 @@ def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=Fals
     print(f"Successfully installed {BINARY_NAME} to {INSTALL_DIR}")
 
 
-def download_and_install(version: str | None = None):
+def download_and_install(version: str | None = None, path: str | None = None):
     if shutil.which("fluxqueue-worker"):
         raise AlreadyInstalledError(
             "fluxqueue-worker is already installed, use `fluxqueue worker update` command to update it."
