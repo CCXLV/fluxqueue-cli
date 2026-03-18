@@ -30,7 +30,7 @@ To start a worker, provide the path to the module where your tasks are exported:
 fluxqueue start --tasks-module-path src/tasks
 ```
 
-To start the worker at the custom path you can do the following,
+To start the worker installed at the custom path you can do the following,
 add these lines in your `pyproject.toml`:
 
 ```toml
