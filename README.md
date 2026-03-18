@@ -16,6 +16,12 @@ Use the CLI to install the worker on your system:
 fluxqueue worker install
 ```
 
+You can also install it in a custom path:
+
+```bash
+fluxqueue worker install --path .fluxqueue/
+```
+
 ## Starting a Worker
 
 To start a worker, provide the path to the module where your tasks are exported:
@@ -23,6 +29,16 @@ To start a worker, provide the path to the module where your tasks are exported:
 ```bash
 fluxqueue start --tasks-module-path src/tasks
 ```
+
+To start the worker at the custom path you can do the following,
+add these lines in your `pyproject.toml`:
+
+```toml
+[tool.fluxqueue_cli]
+worker_path = ".fluxqueue/fluxqueue-worker"
+```
+
+Then running the command above will run that worker by default.
 
 ## Documentation
 
