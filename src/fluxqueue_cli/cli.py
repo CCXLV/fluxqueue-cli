@@ -83,8 +83,16 @@ def worker_install(
     ] = None,
     path: Annotated[
         str | None,
-        typer.Option(help="Custom destination path."),
+        typer.Option(
+            help="Custom destination path. Otherwise installation will require sudo permissions."
+        ),
     ] = None,
+    force: Annotated[
+        bool,
+        typer.Option(
+            help="In case of already installed worker in the destination path using this flag will force the installation."
+        ),
+    ] = False,
 ):
     """
     Download and install [bold]fluxqueue-worker[/bold].
@@ -97,7 +105,7 @@ def worker_install(
                 "Invalid version. Please use versions like: 0.1.0, 0.2.3"
             )
 
-    download_and_install(version, path)
+    download_and_install(version, path, force)
 
 
 @worker_app.command(name="update")

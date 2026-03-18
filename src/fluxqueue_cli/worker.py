@@ -3,6 +3,7 @@ import platform
 import shutil
 import subprocess
 import sys
+import sysconfig
 import tarfile
 import tempfile
 import zipfile
@@ -10,6 +11,7 @@ from pathlib import Path
 
 import requests
 
+from fluxqueue_cli.config import get_fluxqueue_config
 from fluxqueue_cli.exceptions import (
     AlreadyInstalledError,
     BinaryNotFoundError,
@@ -38,6 +40,9 @@ def start_worker(
     queue: str,
     save_dead_tasks=False,
 ):
+    config = get_fluxqueue_config()
+    worker_path = config.get("worker_path", "fluxqueue-worker")
+
     # fmt: off
     arguments = [
         "--concurrency", str(concurrency),
@@ -50,18 +55,28 @@ def start_worker(
     if save_dead_tasks:
         arguments.append("--save-dead-tasks")
 
+    lib_dir = sysconfig.get_config_var("LIBDIR")
+    env = os.environ.copy()
+    if lib_dir:
+        current_ld = env.get("LD_LIBRARY_PATH", "")
+        env["LD_LIBRARY_PATH"] = f"{lib_dir}:{current_ld}" if current_ld else lib_dir
+
     subprocess.run(
-        ["fluxqueue-worker", *arguments],
+        [worker_path, *arguments],
         stdin=sys.stdin,
         stdout=sys.stdout,
         stderr=sys.stderr,
+        env=env,
     )
 
 
 def get_worker_version() -> str | None:
+    config = get_fluxqueue_config()
+    worker_path = config.get("worker_path", "fluxqueue-worker")
+
     try:
         result = subprocess.run(
-            ["fluxqueue-worker", "--version"],
+            [worker_path, "--version"],
             check=True,
             capture_output=True,
             text=True,
@@ -145,14 +160,12 @@ def download_worker_binary(version: str | None = None):
     return str(temp_path), target_name
 
 
-def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=False):
-    if platform.system() == "Windows":
-        dest_path = Path(INSTALL_DIR) / f"{BINARY_NAME}.exe"
-    else:
-        dest_path = Path(INSTALL_DIR) / BINARY_NAME
-    if dest_path.exists() and not overwrite:
-        raise FileExistsError(f"fluxqueue-worker is already installed at {dest_path}")
-
+def install_worker(
+    *,
+    dest_path: Path,
+    actual_file_name: str,
+    temp_file_path: str,
+):
     # Linux
     if actual_file_name.endswith(".tar.gz"):
         with tarfile.open(temp_file_path, "r:gz") as tar:
@@ -234,20 +247,35 @@ def install_worker(*, actual_file_name: str, temp_file_path: str, overwrite=Fals
         delete_installed_files(temp_file_path)
         raise NotImplementedError("Only .tar.gz installation is implemented yet.")
 
-    print(f"Successfully installed {BINARY_NAME} to {INSTALL_DIR}")
+    print(f"Successfully installed {BINARY_NAME} to {dest_path}")
 
 
-def download_and_install(version: str | None = None, path: str | None = None):
-    if shutil.which("fluxqueue-worker"):
+def download_and_install(
+    version: str | None = None, custom_dest_path: str | None = None, force: bool = False
+):
+    dest_path = get_destination_path(custom_dest_path, force)
+
+    if not custom_dest_path and shutil.which("fluxqueue-worker"):
         raise AlreadyInstalledError(
             "fluxqueue-worker is already installed, use `fluxqueue worker update` command to update it."
         )
 
     temp_path, target_name = download_worker_binary(version)
-    install_worker(actual_file_name=target_name, temp_file_path=temp_path)
+    install_worker(
+        dest_path=dest_path,
+        actual_file_name=target_name,
+        temp_file_path=temp_path,
+    )
 
 
-def update_worker(*, version: str | None = None, no_backup: bool = False):
+def update_worker(
+    *,
+    version: str | None = None,
+    custom_dest_path: str | None = None,
+    no_backup: bool = False,
+):
+    dest_path = get_destination_path(custom_dest_path, no_backup)
+
     current_version = get_worker_version()
 
     if not current_version:
@@ -259,12 +287,7 @@ def update_worker(*, version: str | None = None, no_backup: bool = False):
     if version:
         print(f"Desired Version: {version}")
 
-    if platform.system() == "Windows":
-        dest_path = os.path.join(INSTALL_DIR, f"{BINARY_NAME}.exe")
-        backup_suffix = ".exe.backup"
-    else:
-        dest_path = os.path.join(INSTALL_DIR, BINARY_NAME)
-        backup_suffix = ".backup"
+    backup_suffix = ".exe.backup" if platform.system() == "Windows" else ".backup"
 
     if not no_backup:
         new_name = os.path.join(
@@ -274,10 +297,25 @@ def update_worker(*, version: str | None = None, no_backup: bool = False):
 
     temp_path, target_name = download_worker_binary(version)
     install_worker(
+        dest_path=dest_path,
         actual_file_name=target_name,
         temp_file_path=temp_path,
-        overwrite=no_backup,
     )
+
+
+def get_destination_path(custom_dest_path: str | None = None, force: bool = False):
+    dest_dir = Path(custom_dest_path) if custom_dest_path else Path(INSTALL_DIR)
+    if platform.system() == "Windows":
+        dest_path = dest_dir / f"{BINARY_NAME}.exe"
+    else:
+        dest_path = dest_dir / BINARY_NAME
+
+    if dest_path.exists() and not force:
+        raise FileExistsError(
+            f"fluxqueue-worker is already installed at {dest_path}. Use --force flag for forcing the installation."
+        )
+
+    return dest_path
 
 
 def delete_installed_files(temp_path: str):
